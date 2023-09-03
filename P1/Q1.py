@@ -3,20 +3,16 @@ import numpy as np
 
 
 def identificar_cor(imagem_path):
-    # Ler a imagem
     imagem = cv2.imread(imagem_path)
 
-    # Calcular o histograma de cores
     histograma_r = cv2.calcHist([imagem], [0], None, [256], [0, 256])
     histograma_g = cv2.calcHist([imagem], [1], None, [256], [0, 256])
     histograma_b = cv2.calcHist([imagem], [2], None, [256], [0, 256])
 
-    # Obter a cor predominante em cada canal
     r_predominante = np.argmax(histograma_r)
     g_predominante = np.argmax(histograma_g)
     b_predominante = np.argmax(histograma_b)
 
-    # Identificar a cor do carro
     if r_predominante > 200 and g_predominante > 200 and b_predominante > 200:
         return "branco"
     elif r_predominante < 50 and g_predominante < 50 and b_predominante < 50:
@@ -31,9 +27,8 @@ def identificar_cor(imagem_path):
         return "Indeterminada"
 
 
-# Teste do script
 if __name__ == "__main__":
     for cor in ["white", "black", "green", "red", "blue"]:
-        imagem_path = f"Imagens/{cor}.png"  # Substitua pelo caminho da sua imagem
-        identificaCor = identificar_cor(imagem_path)
+        img_path = f"Imagens/{cor}.png"
+        identificaCor = identificar_cor(img_path)
         print(f"A cor do carro é {identificaCor}.")
