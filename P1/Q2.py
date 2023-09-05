@@ -2,48 +2,45 @@ import cv2
 import numpy as np
 
 
-def bayer_to_rgb(bayer_img):
-    h, w = bayer_img.shape
-    rgb_img = np.zeros((h, w, 3), dtype=np.uint8)
+def bayer_para_rgb(bayer_img):
+    h, w, c = bayer_img.shape
 
-    # bayer é bayer_img com a borda
-    bayer = np.pad(bayer_img, ((1, 1), (1, 1)), mode='constant')
+    rgb_img = bayer_img.copy()
 
-    with open("saida.txt", "w") as f:
-        for i in range(1, h + 1):
-            f.write(f"Linha {i}: ")
-            for j in range(1, w + 1):
-                if (i + j) % 2 == 0:
-                    # Pixel verde
-                    green = bayer[i, j]
-                    red = (bayer[i-1, j] + bayer[i+1, j]) // 2
-                    blue = (bayer[i, j-1] + bayer[i, j+1]) // 2
-                    f.write("G")
-                elif i % 2 == 0:
-                    # Pixel azul
-                    blue = bayer[i, j]
-                    green = (bayer[i-1, j] + bayer[i+1, j] +
-                             bayer[i, j-1] + bayer[i, j+1]) // 4
-                    red = (bayer[i-1, j-1] + bayer[i+1, j-1] +
-                           bayer[i-1, j+1] + bayer[i+1, j+1]) // 4
-                    f.write("B")
+    for i in range(1, h - 1):
+        for j in range(1, w - 1):
+            if not i % 2:
+                if j % 2:
+                    rgb_img[i, j, 2] = (
+                        bayer_img[i - 1, j, 2] / 2.0 + bayer_img[i + 1, j, 2] / 2.0)
+                    rgb_img[i, j, 0] = (
+                        bayer_img[i, j - 1, 0] / 2.0 + bayer_img[i, j + 1, 0] / 2.0)
                 else:
-                    # Pixel vermelho
-                    red = bayer[i, j]
-                    green = (bayer[i-1, j] + bayer[i+1, j] +
-                             bayer[i, j-1] + bayer[i, j+1]) // 4
-                    blue = (bayer[i-1, j-1] + bayer[i+1, j-1] +
-                            bayer[i-1, j+1] + bayer[i+1, j+1]) // 4
-                    f.write("R")
+                    rgb_img[i, j, 2] = (bayer_img[i - 1, j - 1, 2] / 4.0 + bayer_img[i - 1, j + 1, 2] /
+                                        4.0 + bayer_img[i + 1, j - 1, 2] / 4.0 + bayer_img[i + 1, j + 1, 2] / 4.0)
+                    rgb_img[i, j, 1] = (bayer_img[i - 1, j, 1] / 4.0 + bayer_img[i, j + 1, 1] /
+                                        4.0 + bayer_img[i, j - 1, 1] / 4.0 + bayer_img[i + 1, j, 1] / 4.0)
+            else:
+                if not j % 2:
+                    rgb_img[i, j, 0] = (
+                        bayer_img[i - 1, j, 2] / 2.0 + bayer_img[i + 1, j, 2] / 2.0)
+                    rgb_img[i, j, 2] = (
+                        bayer_img[i, j - 1, 0] / 2.0 + bayer_img[i, j + 1, 0] / 2.0)
+                else:
+                    rgb_img[i, j, 0] = (bayer_img[i - 1, j - 1, 0] / 4.0 + bayer_img[i - 1, j + 1, 0] /
+                                        4.0 + bayer_img[i + 1, j - 1, 0] / 4.0 + bayer_img[i + 1, j + 1, 2] / 4.0)
+                    rgb_img[i, j, 1] = (bayer_img[i - 1, j, 1] / 4.0 + bayer_img[i, j + 1, 1] /
+                                        4.0 + bayer_img[i, j - 1, 1] / 4.0 + bayer_img[i + 1, j, 1] / 4.0)
 
-                rgb_img[i-1, j-1] = [blue, green, red]
-            f.write("\n")
+    rgb_img[:, [0, w - 1], :] = 0
+    rgb_img[[0, h - 1], :, :] = 0
+
     return rgb_img
 
 
-bayer_img = cv2.imread('Imagens/Lighthouse_bayerBG8.png', cv2.IMREAD_GRAYSCALE)
+bayer_img = cv2.imread('Imagens/Lighthouse_bayerBG8.png')
 
-rgb_img = bayer_to_rgb(bayer_img)
+rgb_img = bayer_para_rgb(bayer_img)
 
 cv2.imshow('Imagem de Entrada', bayer_img)
 cv2.imshow('Imagem de Saida (com bayer)', rgb_img)
