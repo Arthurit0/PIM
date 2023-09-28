@@ -31,8 +31,12 @@ def main():
     # Salvar a imagem no formato RGB
     cv2.imwrite('mapa_pseudocolor_regioes.png', cv2.cvtColor(result_image, cv2.COLOR_RGB2BGR))
 
+    resized_image = cv2.resize(result_image, (600, 600))
+
     # Exibir a imagem no formato RGB
-    cv2.imshow('mapa_pseudocolor_regioes.png', cv2.cvtColor(result_image, cv2.COLOR_RGB2BGR))
+    cv2.imshow('mapa_pseudocolor_regioes.png', cv2.cvtColor(resized_image, cv2.COLOR_RGB2BGR))
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

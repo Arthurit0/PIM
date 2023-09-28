@@ -7,7 +7,7 @@ def map_gray_to_color(value, limiar):
     mapped_value = 300 - (value / 255.0) * 300
     
     if mapped_value not in img_values:
-        img_values.append(mapped_value) 
+        img_values.append(round(mapped_value, 2)) 
 
     if mapped_value > limiar:
         # BGR
@@ -23,8 +23,8 @@ def main():
         if limiar < 1 or limiar > 300:
             print("Valor inválido! Tente novamente...")
 
-    mapa = cv2.imread('Imgs_Originais/mapa.png', cv2.IMREAD_GRAYSCALE)
-    taxa_roubo = cv2.imread('Imgs_Originais/taxaPerCapitaRouboCarros.png', cv2.IMREAD_GRAYSCALE)
+    mapa = cv2.imread('./Imgs_Originais/mapa.png', cv2.IMREAD_GRAYSCALE)
+    taxa_roubo = cv2.imread('./Imgs_Originais/taxaPerCapitaRouboCarros.png', cv2.IMREAD_GRAYSCALE)
 
     if mapa.shape != taxa_roubo.shape:
         print("As dimensões das imagens devem ser iguais.")
@@ -43,7 +43,7 @@ def main():
 
     # Salvar a imagem no formato BGR
     cv2.imwrite('mapa_pseudocolor.png', result_image)
-    print(img_values)
+    print(f'Valores de cinza: {img_values}')
 
     # Exibir a imagem usando OpenCV
     cv2.imshow('Resultado', cv2.resize(result_image, (600, 600)))
