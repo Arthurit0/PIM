@@ -1,10 +1,23 @@
 import cv2
 import numpy as np
+import os
 from skimage import color
 import matplotlib.pyplot as plt
 
 def equalize_histogram(image):
-    return cv2.equalizeHist(image)
+    hist, bins = np.histogram(image.flatten(), 256, [0, 1])
+    
+    # Evitando a divisão por zero
+    if np.max(hist) == 0:
+        return image
+
+    cdf = hist.cumsum()
+    cdf_normalized = cdf * float(image.flatten().shape[0]) / cdf[-1]
+
+    # Realiza a equalização
+    image_equalized = np.interp(image.flatten(), bins[:-1], cdf_normalized)
+    return image_equalized.reshape(image.shape)
+
 
 def plot_histogram(image, title):
     plt.figure()
@@ -13,11 +26,15 @@ def plot_histogram(image, title):
         hist, bins = np.histogram(image[..., i].ravel(), 256, [0, 256])
         plt.plot(hist, color=col)
     plt.show()
+    plt.savefig(f'Tarefa_1-Pseudocor_e_equalização/histogramas_q_e/{title}.png')
+    plt.close()
+    
+    
 
 def main():
     # Carregar as imagens
-    img_outono = cv2.imread('Imgs_Originais/outono_LC.png')
-    img_predios = cv2.imread('Imgs_Originais/predios.jpeg')
+    img_outono = cv2.imread('Tarefa_1-Pseudocor_e_equalização/Imgs_Originais/outono_LC.png')
+    img_predios = cv2.imread('Tarefa_1-Pseudocor_e_equalização/Imgs_Originais/predios.jpeg')
 
     # Converter para RGB (OpenCV carrega em BGR)
     img_outono = cv2.cvtColor(img_outono, cv2.COLOR_BGR2RGB)
@@ -40,6 +57,9 @@ def main():
 
     img_outono_yiq_eq = color.yiq2rgb(img_outono_yiq)
     img_predios_yiq_eq = color.yiq2rgb(img_predios_yiq)
+
+    if not os.path.exists('Tarefa_1-Pseudocor_e_equalização/histogramas_q_e'):
+        os.makedirs('Tarefa_1-Pseudocor_e_equalização/histogramas_q_e')
 
     # Exibir histogramas
     plot_histogram(img_outono, 'Histograma RGB Outono Original')
