@@ -26,10 +26,8 @@ for method in methods:
     print(f"Processando com o método: {method}")
     
     for frame_filename in sorted(os.listdir(frames_dir)):
-        frame_path = f'{frames_dir}/{frame_filename}'
-        frame = cv2.imread(frame_path, 0)
-        method_eval = eval(method)
-        res = cv2.matchTemplate(frame, template, method_eval)
+        frame = cv2.imread(f'{frames_dir}/{frame_filename}', 0)
+        res = cv2.matchTemplate(frame, template, eval(method))
         
         min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
@@ -37,6 +35,7 @@ for method in methods:
             top_left = min_loc
         else:
             top_left = max_loc
+            
         bottom_right = (top_left[0] + template_width, top_left[1] + template_height)
 
         marked_frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)  
