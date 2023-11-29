@@ -1,0 +1,2 @@
+ffmpeg -i garrafa.mp4 -vf "fps=30, format=gray" garrafa_frames/frame%04d.png
+ffmpeg -i gatos.mp4 -vf "fps=30, format=gray" gatos_frames/frame%04d.png

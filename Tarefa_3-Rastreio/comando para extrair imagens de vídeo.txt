@@ -1,1 +1,0 @@
-ffmpeg -i garrafa.mp4 -vf "fps=30, format=gray" frames/frame%04d.png

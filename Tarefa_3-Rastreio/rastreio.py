@@ -3,20 +3,20 @@ import csv
 import os
 import matplotlib.pyplot as plt
 
-frames_dir = './frames'
-template_filename = 'template.png'
+frames_dir = './gatos_frames'
+template_filename = 'gatos_template.png'
 
 template = cv2.imread(template_filename, 0)
 template_height, template_width = template.shape[:2]
 
-first_frame_path = './frames/frame0001.png'
+first_frame_path = f'{frames_dir}/frame0001.png'
 first_frame = cv2.imread(first_frame_path, 0)
 video_height, video_width = first_frame.shape[:2]
 
 methods = [
-    'cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED',
-    'cv2.TM_CCORR', 'cv2.TM_CCORR_NORMED',
-    'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED'
+    'cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', # Correlation Coefficient Matching
+    'cv2.TM_CCORR', 'cv2.TM_CCORR_NORMED', # Cross-Correlation Matching
+    'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED' # Squared Difference Matching
 ]
 
 for method in methods:
